@@ -115,16 +115,18 @@ public class MemoProjectWINMain extends JFrame implements ActionListener {
 //				getValueAt(row, colunm) 메소드로 JTable의 특정 위치의 데이터를 얻어올 수 있다.
 //				System.out.println(table.getValueAt(row, column));
 				
-//				테이블에 저장된 전체 글 목록에서 JTable에서 선택한 행에 해당되는 글 1건을 얻어오는 select sql 명령을
-//				실행하는 MemoProjectDAO 클래스의 메소드를 호출하고 리턴되는 결과를 MemoVO 클래스 객체로 받는다.
-				MemoVO vo = MemoProjectDAO.selectByIdx(row);
-//				System.out.println(vo);
-				
-//				리턴받은 MemoVO 클래스 객체에 저장된 데이터를 텍스트 필드에 넣어주고 포커스를 패스워드 필드로 옮겨준다.
-				nameField.setText(vo.getName());
-				passwordField.setText("");
-				memoField.setText(vo.getMemo());
-				passwordField.requestFocus();
+				if (row >= 0) {
+//					테이블에 저장된 전체 글 목록에서 JTable에서 선택한 행에 해당되는 글 1건을 얻어오는 select sql 명령을
+//					실행하는 MemoProjectDAO 클래스의 메소드를 호출하고 리턴되는 결과를 MemoVO 클래스 객체로 받는다.
+					MemoVO vo = MemoProjectDAO.selectByIdx(row);
+//					System.out.println(vo);
+					
+//					리턴받은 MemoVO 클래스 객체에 저장된 데이터를 텍스트 필드에 넣어주고 포커스를 패스워드 필드로 옮겨준다.
+					nameField.setText(vo.getName());
+					passwordField.setText("");
+					memoField.setText(vo.getMemo());
+					passwordField.requestFocus();
+				}
 			}
 			
 		});
@@ -163,11 +165,21 @@ public class MemoProjectWINMain extends JFrame implements ActionListener {
 				view();
 				break;
 			case "수정":
-				
+//				패스워드 필드에 입력한 비밀번호와 메모 텍스트 필드에 입력한 수정할 데이터를 받는다.
+				password = passwordField.getText().trim();
+				memo = memoField.getText().trim();
+//				JTable에서 선택한 데이터를 테이블에서 수정하는 update sql 명령을 실행하는 MemoProjectDAO 클래스의 메소드를
+				MemoProjectDAO.update(table.getSelectedRow(), password, memo);
+				clear();
 				view();
 				break;
 			case "삭제":
-				
+//				패스워드 필드에 입력한 비밀번호를 받는다.
+				password = passwordField.getText().trim();
+//				JTable에서 선택한 데이터를 테이블에서 삭제하는 delete sql 명령을 실행하는 MemoProjectDAO 클래스의 메소드를
+//				호출한다.
+				MemoProjectDAO.delete(table.getSelectedRow(), password);
+				clear();
 				view();
 				break;
 		}

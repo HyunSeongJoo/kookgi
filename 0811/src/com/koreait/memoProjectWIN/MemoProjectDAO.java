@@ -102,6 +102,80 @@ public class MemoProjectDAO {
 		}
 		
 		return vo;
+		
+	}
+
+//	MemoProjectWINMain 클래스에서 JTable에서 선택한 삭제할 글의 인덱스와 삭제하기 위해 입력한 비밀번호를 넘겨받고 테이블에
+//	저장된 글 1건을 삭제하는 메소드 
+	public static void delete(int row, String password) {
+		
+//		글을 삭제하기 위한 비밀번호가 입력되었나 검사한다.
+		if (password.length() == 0) {
+			JOptionPane.showMessageDialog(null, "비밀번호가 입력되지 않았습니다.");
+			return;
+		}
+		
+//		비밀번호가 입력되었으므로 글을 삭제한다.
+//		삭제할 글의 글번호와 비밀번호를 알아야 하므로 삭제할 글의 인덱스에 해당되는 글 1건을 얻어온다.
+		MemoVO vo = selectByIdx(row);
+//		System.out.println(vo);
+		
+//		삭제할 글의 비밀번호와 삭제하기 위해 입력한 비밀번호가 같으면 글을 삭제한다.
+		if (vo.getPassword().equals(password)) {
+			
+			try {
+				Connection conn = DBUtil.getMySqlConnection();
+				String sql = "delete from memo where idx = ?";
+				PreparedStatement pstmt = conn.prepareStatement(sql);
+				pstmt.setInt(1, vo.getIdx());
+				pstmt.executeUpdate();
+			} catch (SQLException e) {
+				e.printStackTrace();
+				JOptionPane.showMessageDialog(null, "select sql 명령이 올바로 실행되지 않았습니다.");
+			}
+			
+		} else {
+			JOptionPane.showMessageDialog(null, "비밀번호가 일치하지 않습니다.");
+		}
+		
+	}
+
+//	MemoProjectWINMain 클래스에서 JTable에서 선택한 수정할 글의 인덱스와 수정하기 위해 입력한 비밀번호를 수정할 메모를
+//	넘겨받고 테이블에 저장된 글 1건을 수정하는 메소드 
+	public static void update(int row, String password, String memo) {
+		
+//		글을 수정하기 위한 비밀번호와 메모가 입력되었나 검사한다.
+		if (password.length() == 0) {
+			JOptionPane.showMessageDialog(null, "비밀번호가 입력되지 않았습니다.");
+			return;
+		} else if (memo.length() == 0) {
+			JOptionPane.showMessageDialog(null, "메모가 입력되지 않았습니다.");
+			return;
+		}
+		
+//		비밀번호와 메모가 입력되었으므로 글을 수정한다.
+//		수정할 글의 글번호와 비밀번호를 알아야 하므로 수정할 글의 인덱스에 해당되는 글 1건을 얻어온다.
+		MemoVO vo = selectByIdx(row);
+
+//		수정할 글의 비밀번호와 수정하기 위해 입력한 비밀번호가 같으면 글을 삭제한다.
+		if (vo.getPassword().equals(password)) {
+			
+			try {
+				Connection conn = DBUtil.getMySqlConnection();
+				String sql = "update memo set memo = ? where idx = ?";
+				PreparedStatement pstmt = conn.prepareStatement(sql);
+				pstmt.setString(1, memo);
+				pstmt.setInt(2, vo.getIdx());
+				pstmt.executeUpdate();
+			} catch (SQLException e) {
+				e.printStackTrace();
+				JOptionPane.showMessageDialog(null, "select sql 명령이 올바로 실행되지 않았습니다.");
+			}
+			
+		} else {
+			JOptionPane.showMessageDialog(null, "비밀번호가 일치하지 않습니다.");
+		}
+		
 	}
 
 }
